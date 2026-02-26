@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>順道洗車｜新官網架構藍圖（主管版）</title>
+  <meta name="description" content="順道洗車新官網架構藍圖（主管版）：網站目的、Sitemap、首頁/站點頁區塊、優惠公告、Google評價展示、一鍵導航、FAQ、聯絡與交付內容。" />
+  <style>
+    :root{
+      --bg:#061514;
+      --panel:rgba(255,255,255,.035);
+      --text:#eaf4f1;
+      --muted:#b6cbc4;
+      --line:rgba(234,244,241,.12);
+      --brand:#39d6a5;
+      --brand2:#7cf0cf;
+      --radius:16px;
+      --max:1120px;
+      --shadow:0 14px 36px rgba(0,0,0,.35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(980px 560px at 15% -10%, rgba(57,214,165,.24), transparent 60%),
+        radial-gradient(900px 520px at 100% 10%, rgba(124,240,207,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg), #03110f 70%, #020908);
+      line-height:1.6;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--max); margin:0 auto; padding:0 18px}
+    .topbar{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:rgba(6,21,20,.78);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0; gap:14px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900}
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background:linear-gradient(135deg, rgba(57,214,165,.95), rgba(124,240,207,.72));
+      box-shadow:0 10px 22px rgba(57,214,165,.18);
+      display:grid; place-items:center;
+      color:#042019; font-weight:950;
+      font-family:var(--mono);
+    }
+    .menu{display:flex; gap:10px; flex-wrap:wrap}
+    .menu a{
+      color:var(--muted); font-size:13px;
+      padding:8px 10px; border-radius:12px;
+      border:1px solid transparent;
+    }
+    .menu a:hover{color:var(--text); border-color:var(--line); background:rgba(255,255,255,.04)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px; padding:10px 14px;
+      border-radius:14px; border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-weight:750; font-size:14px; white-space:nowrap;
+    }
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(57,214,165,.95), rgba(124,240,207,.72));
+      color:#042019; border-color:transparent;
+    }
+    .btn:hover{border-color:rgba(124,240,207,.35); box-shadow:0 0 0 4px rgba(57,214,165,.08)}
+    .hero{padding:46px 0 18px}
+    h1{margin:0 0 10px; font-size:40px; line-height:1.12; letter-spacing:-.4px}
+    .sub{margin:0; color:var(--muted); max-width:80ch}
+    .grid{display:grid; gap:14px}
+    .grid2{grid-template-columns:1.1fr .9fr}
+    .grid3{grid-template-columns:repeat(3, 1fr)}
+    .section{padding:26px 0; border-top:1px solid var(--line)}
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:var(--panel);
+      padding:16px;
+    }
+    .card h2{margin:0 0 10px; font-size:22px; letter-spacing:-.2px}
+    .card h3{margin:0 0 8px; font-size:17px}
+    .meta{margin:0 0 10px; color:var(--muted); font-size:13px}
+    ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    li{margin:6px 0}
+    .tagrow{display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:13px;
+    }
+    .tag b{color:var(--text)}
+    .kpis{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .kpi{border:1px solid var(--line); border-radius:14px; padding:12px; background:rgba(255,255,255,.03)}
+    .kpi b{display:block; font-size:14px}
+    .kpi span{display:block; margin-top:4px; color:var(--muted); font-size:12px}
+    .pill{
+      display:inline-flex; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:12px; margin-right:8px; margin-top:8px;
+    }
+    .mono{font-family:var(--mono)}
+    .table{
+      width:100%; border-collapse:separate; border-spacing:0;
+      overflow:hidden; border-radius:14px; border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+    .table th,.table td{
+      padding:12px; border-bottom:1px solid var(--line);
+      font-size:13px; color:var(--muted); vertical-align:top
+    }
+    .table th{color:var(--text); text-align:left; background:rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:none}
+    .footer{padding:26px 0 40px; color:var(--muted); font-size:12px}
+    @media (max-width:980px){
+      h1{font-size:34px}
+      .grid2,.grid3{grid-template-columns:1fr}
+      .menu{display:none}
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container">
+    <div class="nav">
+      <a class="brand" href="#top">
+        <div class="logo">SD</div>
+        <div>
+          <div style="font-size:14px; line-height:1.05">順道洗車</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:2px">新官網架構藍圖（主管版）</div>
+        </div>
+      </a>
+
+      <nav class="menu" aria-label="主選單">
+        <a href="#goal">目的</a>
+        <a href="#sitemap">網站地圖</a>
+        <a href="#homepage">首頁</a>
+        <a href="#locationpages">站點頁</a>
+        <a href="#promos">優惠公告</a>
+        <a href="#reviews">Google評價</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">聯絡</a>
+        <a href="#done">交付定義</a>
+      </nav>
+
+      <div style="display:flex; gap:10px; align-items:center">
+        <a class="btn" href="#locationpages">站點頁規劃</a>
+        <a class="btn primary" href="#done">交付定義</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="container">
+      <div class="grid grid2">
+        <div>
+          <div class="tagrow">
+            <span class="tag"><b>文件</b>：順道洗車新官網架構藍圖</span>
+            <span class="tag"><b>版本</b>：v1.0</span>
+            <span class="tag"><b>更新日</b>：＿＿＿＿／＿＿＿＿／＿＿＿＿</span>
+          </div>
+
+          <h1>新官網的做法：<br/>用「站點頁」吃在地搜尋，用「即時資訊＋優惠」提高轉換</h1>
+          <p class="sub">
+            官網以兩個站點為主軸：新莊 A7／內湖 A0。使用者進站後，3 秒內完成「找到站點 → 看評價 → 直接導航」；
+            同時提供站點即時資訊與優惠公告，降低詢問成本並提高到店率。
+          </p>
+
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn primary" href="［A7 Google 地圖導航連結］" target="_blank" rel="noopener">一鍵導航｜新莊 A7</a>
+            <a class="btn primary" href="［A0 Google 地圖導航連結］" target="_blank" rel="noopener">一鍵導航｜內湖 A0</a>
+            <a class="btn" href="［LINE 官方帳號連結］" target="_blank" rel="noopener">加入 LINE（客服/優惠）</a>
+          </div>
+        </div>
+
+        <aside class="card" style="box-shadow:var(--shadow); background:linear-gradient(180deg, rgba(12,40,33,.92), rgba(6,21,20,.72))">
+          <h2 style="margin:0 0 10px">官網 KPI</h2>
+          <div class="kpis">
+            <div class="kpi"><b>搜尋曝光</b><span>A7/A0 站點頁 + 在地關鍵字</span></div>
+            <div class="kpi"><b>到店轉換</b><span>一鍵導航 / 電話 / LINE</span></div>
+            <div class="kpi"><b>信任建立</b><span>Google 評價展示</span></div>
+            <div class="kpi"><b>資訊更新</b><span>優惠 / 公告 / 即時資訊</span></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="goal" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>一、架站目的</h2>
+        <ul>
+          <li>強化在地搜尋曝光：新莊 A7／內湖 A0</li>
+          <li>讓消費者快速拿到即時資訊：營業時間、注意事項、站點公告</li>
+          <li>讓消費者快速看到優惠：活動規則、期間、適用站點</li>
+          <li>讓消費者一鍵行動：導航、電話、LINE</li>
+          <li>以 Google 評價作為信任來源：首頁與站點頁皆可見</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="sitemap" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>二、網站地圖（Sitemap）</h2>
+        <table class="table" aria-label="Sitemap">
+          <tr>
+            <th style="width:22%">頁面</th>
+            <th style="width:48%">主要內容</th>
+            <th style="width:30%">主要 CTA</th>
+          </tr>
+          <tr>
+            <td><b>首頁</b></td>
+            <td>兩站點入口、置頂優惠、服務/價格摘要、評價摘要、FAQ 摘要</td>
+            <td>進站點頁／一鍵導航／LINE</td>
+          </tr>
+          <tr>
+            <td><b>站點頁：新莊 A7</b></td>
+            <td>地址/營業時間/即時資訊/本站優惠/Google 評價/照片</td>
+            <td>一鍵導航／電話／LINE</td>
+          </tr>
+          <tr>
+            <td><b>站點頁：內湖 A0</b></td>
+            <td>地址/營業時間/即時資訊/本站優惠/Google 評價/照片</td>
+            <td>一鍵導航／電話／LINE</td>
+          </tr>
+          <tr>
+            <td><b>服務與價格</b></td>
+            <td>方案列表、加值項目、付款方式、注意事項</td>
+            <td>前往站點頁／一鍵導航</td>
+          </tr>
+          <tr>
+            <td><b>優惠／公告</b></td>
+            <td>置頂優惠、優惠列表、公告列表</td>
+            <td>前往站點頁／加入 LINE</td>
+          </tr>
+          <tr>
+            <td><b>Google 評價</b></td>
+            <td>兩站點評價摘要＋精選評價</td>
+            <td>前往 Google 評論</td>
+          </tr>
+          <tr>
+            <td><b>FAQ</b></td>
+            <td>使用流程、付款、常見問題、客服</td>
+            <td>LINE／電話</td>
+          </tr>
+          <tr>
+            <td><b>關於順道</b></td>
+            <td>品牌介紹、服務承諾、合作方式</td>
+            <td>合作洽詢</td>
+          </tr>
+          <tr>
+            <td><b>聯絡我們</b></td>
+            <td>LINE、電話、Email、（如需）合作表單</td>
+            <td>LINE／電話／表單送出</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="homepage" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>三、首頁（由上到下）</h2>
+
+        <div class="grid grid3" style="margin-top:12px">
+          <div class="card">
+            <h3>1. 首屏：定位＋兩站點入口</h3>
+            <ul>
+              <li>主標：［一句話定位］</li>
+              <li>副標：［20–40 字］</li>
+              <li>站點入口：新莊 A7／內湖 A0</li>
+              <li>CTA：一鍵導航／LINE／電話</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>2. 站點快速卡（各一張）</h3>
+            <ul>
+              <li>地址、營業時間</li>
+              <li>即時資訊（摘要）</li>
+              <li>本站優惠（摘要）</li>
+              <li>CTA：進站點頁／一鍵導航</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>3. 置頂優惠</h3>
+            <ul>
+              <li>優惠名稱：［＿＿＿＿］</li>
+              <li>期間：［YYYY/MM/DD - YYYY/MM/DD］</li>
+              <li>適用站點：A7／A0／全站</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid grid3" style="margin-top:14px">
+          <div class="card">
+            <h3>4. 服務與價格摘要</h3>
+            <ul>
+              <li>方案：［＿＿＿＿］</li>
+              <li>加值：［＿＿＿＿］</li>
+              <li>付款方式：［＿＿＿＿］</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>5. Google 評價摘要</h3>
+            <ul>
+              <li>星等：［X.X］</li>
+              <li>評價數：［XXX］</li>
+              <li>精選評價：［3–6 則］</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>6. FAQ 摘要＋客服入口</h3>
+            <ul>
+              <li>使用流程</li>
+              <li>付款方式</li>
+              <li>優惠使用</li>
+              <li>問題排除／客服</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="locationpages" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>四、站點頁（A7 / A0）</h2>
+        <p class="meta">每站一頁，結構一致；站點資訊與優惠可各自更新。</p>
+
+        <div class="grid grid2" style="margin-top:12px">
+          <div class="card">
+            <h3>站點頁固定內容</h3>
+            <ul>
+              <li>站點名稱：順道洗車｜新莊 A7（或 內湖 A0）</li>
+              <li>地址：［完整地址］</li>
+              <li>營業時間：［每日/例外日］</li>
+              <li>一鍵導航：［Google Maps 連結］</li>
+              <li>即時資訊：［例如：今日設備狀態/站點公告］</li>
+              <li>本站優惠：［優惠卡片列表］</li>
+              <li>Google 評價：摘要＋精選評價＋前往評論</li>
+              <li>站點照片：外觀／入口／動線／設備</li>
+              <li>客服入口：LINE／電話</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>站點頁 URL</h3>
+            <table class="table" style="margin-top:6px">
+              <tr><th>站點</th><th>URL</th></tr>
+              <tr><td><b>新莊 A7</b></td><td class="mono">/locations/a7</td></tr>
+              <tr><td><b>內湖 A0</b></td><td class="mono">/locations/a0</td></tr>
+            </table>
+            <div style="margin-top:10px">
+              <span class="pill">一鍵導航</span>
+              <span class="pill">電話</span>
+              <span class="pill">LINE</span>
+              <span class="pill">Google 評論</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="promos" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>五、優惠／公告</h2>
+        <div class="grid grid2" style="margin-top:12px">
+          <div class="card">
+            <h3>優惠卡片欄位</h3>
+            <ul>
+              <li>標題：［優惠名稱］</li>
+              <li>期間：［YYYY/MM/DD - YYYY/MM/DD］</li>
+              <li>適用站點：A7／A0／全站</li>
+              <li>條件：［條列］</li>
+              <li>使用方式：［條列］</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>公告欄位</h3>
+            <ul>
+              <li>日期：［YYYY/MM/DD］</li>
+              <li>類型：營業／維護／站點</li>
+              <li>內容：［一句話摘要］</li>
+              <li>影響站點：A7／A0</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reviews" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>六、Google 評價展示</h2>
+        <div class="grid grid2" style="margin-top:12px">
+          <div class="card">
+            <h3>首頁與站點頁的評價區塊</h3>
+            <ul>
+              <li>平均星等：［X.X］</li>
+              <li>評價數：［XXX］</li>
+              <li>精選評價：［3–6 則］</li>
+              <li>前往 Google 評論：［連結］</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>評價頁（集中展示）</h3>
+            <ul>
+              <li>新莊 A7：評價摘要＋精選</li>
+              <li>內湖 A0：評價摘要＋精選</li>
+              <li>我要評價：各站點 Google 評論入口</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>七、FAQ</h2>
+        <div class="grid grid2" style="margin-top:12px">
+          <div class="card">
+            <h3>使用流程</h3>
+            <ul>
+              <li>如何開始洗車？</li>
+              <li>現場流程</li>
+              <li>需要預約嗎？</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>付款與問題排除</h3>
+            <ul>
+              <li>付款方式</li>
+              <li>優惠使用</li>
+              <li>異常處理</li>
+              <li>客服入口：LINE／電話</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>八、聯絡與導流入口</h2>
+        <div class="grid grid2" style="margin-top:12px">
+          <div class="card">
+            <h3>一般客服</h3>
+            <ul>
+              <li>LINE：［連結］</li>
+              <li>電話：［電話］</li>
+              <li>Email：［信箱］</li>
+              <li>服務時間：［時間］</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>合作洽詢</h3>
+            <ul>
+              <li>合作類型：場地合作／品牌合作／企業合作</li>
+              <li>聯絡方式：［表單或Email］</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="done" class="section">
+    <div class="container">
+      <div class="card">
+        <h2>九、交付內容（網站完成的定義）</h2>
+        <table class="table" aria-label="deliverables" style="margin-top:10px">
+          <tr>
+            <th style="width:26%">項目</th>
+            <th style="width:44%">交付內容</th>
+            <th style="width:30%">對應頁面</th>
+          </tr>
+          <tr>
+            <td><b>頁面完成</b></td>
+            <td>首頁、A7站點頁、A0站點頁、服務與價格、優惠/公告、評價、FAQ、關於、聯絡</td>
+            <td class="mono">/ /locations/a7 /locations/a0 /pricing /promos /reviews /faq /about /contact</td>
+          </tr>
+          <tr>
+            <td><b>核心導流</b></td>
+            <td>一鍵導航、LINE、電話入口固定出現在首頁與站點頁</td>
+            <td>首頁、站點頁、聯絡</td>
+          </tr>
+          <tr>
+            <td><b>評價展示</b></td>
+            <td>首頁與站點頁展示評價摘要；評價頁集中展示</td>
+            <td>首頁、站點頁、評價頁</td>
+          </tr>
+          <tr>
+            <td><b>優惠/公告</b></td>
+            <td>優惠卡片與公告列表可更新；首頁可置頂優惠</td>
+            <td>首頁、優惠/公告、站點頁</td>
+          </tr>
+          <tr>
+            <td><b>SEO 基礎</b></td>
+            <td>每頁 Title/Description、H1/H2 結構、站點頁在地關鍵字、圖片 Alt</td>
+            <td>全站</td>
+          </tr>
+          <tr>
+            <td><b>追蹤</b></td>
+            <td>導航/LINE/電話點擊事件、優惠點擊、站點頁瀏覽</td>
+            <td>全站</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <h2>十、內容清單（需提供）</h2>
+        <div class="grid grid2" style="margin-top:10px">
+          <div class="card">
+            <h3>固定資料</h3>
+            <ul>
+              <li>品牌一句話：［填入］</li>
+              <li>新莊 A7：地址、營業時間、電話、導航連結、Google 評論連結</li>
+              <li>內湖 A0：地址、營業時間、電話、導航連結、Google 評論連結</li>
+              <li>LINE 官方帳號連結</li>
+              <li>服務方案與價格表</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>素材</h3>
+            <ul>
+              <li>A7：外觀/入口/動線/設備照片</li>
+              <li>A0：外觀/入口/動線/設備照片</li>
+              <li>洗車流程照片</li>
+              <li>優惠素材（圖/文）</li>
+              <li>精選 Google 評價文字（可直接引用）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="container" style="padding:0">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center">
+            <div>順道洗車新官網架構藍圖（主管版）</div>
+            <div class="mono">v1.0</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href');
+      if(!id || id === '#') return;
+      var el = document.querySelector(id);
+      if(!el) return;
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
